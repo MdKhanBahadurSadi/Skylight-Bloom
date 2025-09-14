@@ -3,38 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fireworks Generator</title>
+    <title>Skylight Bloom</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <style>
         body {
             margin: 0;
             overflow: hidden;
             background-color: #000;
-            background-image: url('unnamed.png');
-            background-size: cover;
-            background-position: center;
         }
 
         canvas {
             display: block;
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        #controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        #controls p {
-            margin: 0;
         }
     </style>
 </head>
@@ -46,6 +25,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById('fireworksCanvas');
         const ctx = canvas.getContext('2d');
+        const backgroundImage = new Image();
+        backgroundImage.src = 'unnamed.png'; 
 
         let particles = [];
         let fireworks = [];
@@ -81,17 +62,20 @@
             constructor(x, y) {
                 this.x = x;
                 this.y = y - 45; 
-                this.size = 20;
+                this.size = 25; 
             }
 
             draw() {
+                ctx.save();
                 ctx.beginPath();
                 ctx.moveTo(this.x - this.size, this.y);
                 ctx.lineTo(this.x + this.size, this.y);
                 ctx.lineTo(this.x + this.size / 2, this.y - this.size * 2);
                 ctx.lineTo(this.x - this.size / 2, this.y - this.size * 2);
                 ctx.closePath();
-                ctx.fillStyle = '#808080';
+                ctx.fillStyle = '#FF4500';
+                ctx.shadowColor = '#FFA500';
+                ctx.shadowBlur = 15;
                 ctx.fill();
 
                 ctx.beginPath();
@@ -100,8 +84,11 @@
                 ctx.lineTo(this.x + this.size / 4, this.y - this.size * 3);
                 ctx.lineTo(this.x - this.size / 4, this.y - this.size * 3);
                 ctx.closePath();
-                ctx.fillStyle = '#C0C0C0';
+                ctx.fillStyle = '#FFFF00';
+                ctx.shadowColor = '#FFFF00';
+                ctx.shadowBlur = 15;
                 ctx.fill();
+                ctx.restore();
             }
         }
 
@@ -143,10 +130,20 @@
             draw() {
                 if (this.isExploded) return;
 
+                const tailLength = 15;
+                const tailX = this.x - Math.cos(this.angle) * tailLength;
+                const tailY = this.y - Math.sin(this.angle) * tailLength;
+
+                ctx.save();
+                ctx.shadowColor = 'hsl(' + this.hue + ', 100%, 50%)';
+                ctx.shadowBlur = 10;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-                ctx.fillStyle = 'hsl(' + this.hue + ', 100%, 50%)';
-                ctx.fill();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(tailX, tailY);
+                ctx.strokeStyle = 'hsl(' + this.hue + ', 100%, 50%)';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.restore();
             }
 
             explode(particleCount) {
@@ -213,15 +210,16 @@
             fireworks.push(new Firework(x, y, targetX, targetY, randomHue));
             launchSynth.triggerAttackRelease("C4", "8n");
 
-            nextFireworkParticleCount += 50;
-            if (nextFireworkParticleCount > 1000) {
-                nextFireworkParticleCount = 1000;
+            nextFireworkParticleCount += 100;
+            if (nextFireworkParticleCount > 2000) {
+                nextFireworkParticleCount = 2000;
             }
         }
 
         canvas.addEventListener('click', launchFirework);
 
         function animate() {
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -242,7 +240,7 @@
             
             requestAnimationFrame(animate);
         }
-
+        
         animate();
     });
 </script>
