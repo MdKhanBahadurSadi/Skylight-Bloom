@@ -26,13 +26,13 @@
         const canvas = document.getElementById('fireworksCanvas');
         const ctx = canvas.getContext('2d');
         const backgroundImage = new Image();
-        backgroundImage.src = 'unnamed.png'; 
+        backgroundImage.src = 'background.jpg';
 
         let particles = [];
         let fireworks = [];
         let nextFireworkParticleCount = 100;
         let fireworkLauncher;
-        
+
         const launchSynth = new Tone.Synth({
             oscillator: {
                 type: 'triangle'
@@ -61,8 +61,8 @@
         class FireworkLauncher {
             constructor(x, y) {
                 this.x = x;
-                this.y = y - 45; 
-                this.size = 25; 
+                this.y = y - 45;
+                this.size = 25;
             }
 
             draw() {
@@ -115,9 +115,9 @@
 
                 const vx = Math.cos(this.angle) * this.speed;
                 const vy = Math.sin(this.angle) * this.speed;
-                
+
                 this.traveled += this.speed;
-                
+
                 if (this.traveled >= this.distance) {
                     this.explode(nextFireworkParticleCount);
                     return;
@@ -204,7 +204,7 @@
             const y = fireworkLauncher.y - fireworkLauncher.size * 3;
             const targetX = e.clientX;
             const targetY = e.clientY;
-            
+
             const randomHue = Math.random() * 360;
 
             fireworks.push(new Firework(x, y, targetX, targetY, randomHue));
@@ -236,11 +236,11 @@
                 p.draw();
             });
 
-            fireworkLauncher.draw();
-            
+            fireworkLauncher..draw();
+
             requestAnimationFrame(animate);
         }
-        
+
         animate();
     });
 </script>
