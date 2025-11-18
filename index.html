@@ -11,7 +11,6 @@
             overflow: hidden;
             background-color: #000;
         }
-
         canvas {
             display: block;
         }
@@ -25,8 +24,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.getElementById('fireworksCanvas');
         const ctx = canvas.getContext('2d');
-        const backgroundImage = new Image();
-        backgroundImage.src = 'background.jpg';
 
         let particles = [];
         let fireworks = [];
@@ -99,10 +96,6 @@
                 this.targetX = targetX;
                 this.targetY = targetY;
                 this.hue = hue;
-                this.vx = 0;
-                this.vy = 0;
-                this.gravity = 0.05;
-                this.friction = 0.99;
                 this.speed = 4;
                 this.angle = Math.atan2(targetY - y, targetX - x);
                 this.distance = Math.sqrt(Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2));
@@ -217,9 +210,12 @@
         }
 
         canvas.addEventListener('click', launchFirework);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            launchFirework(e.touches[0]);
+        });
 
         function animate() {
-            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -236,7 +232,7 @@
                 p.draw();
             });
 
-            fireworkLauncher..draw();
+            fireworkLauncher.draw();
 
             requestAnimationFrame(animate);
         }
